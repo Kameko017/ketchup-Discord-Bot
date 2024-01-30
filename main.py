@@ -8,12 +8,7 @@ def run():
     bot = commands.Bot(intents=intents,command_prefix="!!")
     @bot.event
     async def on_ready():
-        await load() 
-        try:
-            bot.tree.copy_global_to(guild=Setting.guild)
-            await bot.tree.sync(guild=Setting.guild)
-        except Exception as e:
-            print("An error occurred while syncing: ", e)   
+        await load()  
         print("bot is ready!")
     
     async def load():
