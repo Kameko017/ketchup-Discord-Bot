@@ -9,7 +9,7 @@ import traceback
 class Request_Role(commands.Cog):
     def __init__(self,bot) :
         self.bot = bot
-    @app_commands.command(name="聲請權限")
+    @app_commands.command(name="申請權限")
     @app_commands.rename(role="權限")
     async def request(self,interaction:discord.Interaction,role:discord.Role):
         button = Button(label="我要申請!",style=discord.ButtonStyle.green)
@@ -55,6 +55,6 @@ class Request_Role(commands.Cog):
         button.callback = button_callback
         view = View()
         view.add_item(button)
-        await interaction.response.send_message("",view = view)   
+        await interaction.channel.send("",view = view)   
 async def setup(bot):
     await bot.add_cog(Request_Role(bot))
