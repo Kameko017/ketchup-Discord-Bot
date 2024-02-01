@@ -47,13 +47,13 @@ class Request_Role(commands.Cog):
                     await interaction.response.send_message("你不是管理員，請勿點擊!",ephemeral=True)
             disagree_agree_button.callback = disagree_button_callback
             
-            agree_view = View()
+            agree_view = View(timeout=None)
             agree_view.add_item(agree_button)
             agree_view.add_item(disagree_agree_button)
             await interaction.response.send_message("通知管理員中...",delete_after=0.1,ephemeral=True)
             await interaction.channel.send(f"<@&1199388464450392114> 申請{role.name}身分組: {interaction.user.mention} (同意/不同意按鈕只限管理員，請勿亂點)",view=agree_view)
         button.callback = button_callback
-        view = View()
+        view = View(timeout=None)
         view.add_item(button)
         await interaction.channel.send("",view = view)   
 async def setup(bot):

@@ -14,7 +14,7 @@ class YoutubeStats(commands.Cog):
     view_channel : discord.VoiceChannel
     show_subscriber = True
     subscriberCount,viewCount = 0,0
-    last_subscriberCount,last_viewCount = 0,0
+    old_subscriberCount,old_viewCount = 0,0
     show_view  = True
     
     @app_commands.command(name="設置youyube狀態")
@@ -56,10 +56,10 @@ class YoutubeStats(commands.Cog):
         request = youtubeAPI.request()
         new_subscriber_count = request[0]
         new_view_count = request[1]
-        if (new_subscriber_count != self.subscriberCount or new_view_count != self.viewCount) and (self.last_subscriberCount != self.subscriberCount or self.last_viewCount != new_subscriber_count):
+        if (new_subscriber_count != self.subscriberCount or new_view_count != self.viewCount) and (new_subscriber_count !=  self.old_subscriberCount or new_view_count != self.old_viewCount):
             print (time.asctime( time.localtime(time.time()) ))
-            print(f"subscriber:{new_subscriber_count} ,view:{new_view_count}   (old:subscriber:{self.subscriberCount} ,view:{self.viewCount}) (last_subscriberCount:{self.last_subscriberCount},last_viewCount:{self.last_viewCount})")
-            self.last_subscriberCount,self.last_viewCount = self.subscriberCount,self.viewCount
+            print(f"subscriber:{new_subscriber_count} ,view:{new_view_count}   (original:subscriber:{self.subscriberCount} ,view:{self.viewCount}) (old:{self.old_subscriberCount},last_viewCount:{self.old_viewCount})")
+            self.old_subscriberCount,self.old_viewCount = self.subscriberCount,self.viewCount
             self.subscriberCount,self.viewCount = new_subscriber_count,new_view_count
             
             if self.show_subscriber :
