@@ -10,17 +10,18 @@ class Request_Role(commands.Cog):
     def __init__(self,bot) :
         self.bot = bot
     @app_commands.command(name="申請權限")
-    @app_commands.rename(role="權限")
-    async def request(self,interaction:discord.Interaction,role:discord.Role):
+    @app_commands.rename(role="權限",administrator="管理員",message_id= "訊息id")
+    async def request(self,interaction:discord.Interaction,role:discord.Role,administrator:discord.Role,message_id:str = "0"):
+        
         button = Button(label="我要申請!",style=discord.ButtonStyle.green)
         async def button_callback(interaction:discord.Interaction):
-            print(f"申請{role.name}: 申請人:{interaction.user.name}, 原有身分組:{interaction.user.roles}")
+            print(f"申請{role.name}: 申請人:{interaction.user.name}")
             request_user = interaction.user
             
             agree_button = Button(label="同意",style=discord.ButtonStyle.green)
             async def agree_button_callback(interaction:discord.Interaction):
-                administrator_role = get(interaction.guild.roles,name="管理員")
-                if administrator_role in interaction.user.roles:
+                if administrator in interaction.user.roles:
+                    print(f"申請{role.name}身分組: 申請人:{request_user.name},同意人:{interaction.user.name}")
                     await request_user.add_roles(interaction.guild.get_role(role.id))
                     await interaction.response.edit_message(content="處理中...",delete_after=0.1)
                     await interaction.channel.send(f"{request_user.mention} 已獲得{role.name}身分組")
@@ -31,8 +32,8 @@ class Request_Role(commands.Cog):
             
             disagree_agree_button = Button(label="不同意",style=discord.ButtonStyle.red)
             async def disagree_button_callback(interaction:discord.Interaction):
-                administrator_role = get(interaction.guild.roles,name="管理員")
-                if administrator_role in interaction.user.roles:
+                if administrator in interaction.user.roles:
+                    print(f"申請{role.name}身分組: 申請人:{request_user.name},同意人:{interaction.user.name}")
                     class disagree_modal(Modal,title="不同意原因"):
                         disagree_reason = TextInput(label="原因:",style=discord.TextStyle.long,max_length=2000,)
                         async def on_submit(self, interaction: discord.Interaction):
@@ -51,10 +52,15 @@ class Request_Role(commands.Cog):
             agree_view.add_item(agree_button)
             agree_view.add_item(disagree_agree_button)
             await interaction.response.send_message("通知管理員中...",delete_after=0.1,ephemeral=True)
-            await interaction.channel.send(f"<@&1199388464450392114> 申請{role.name}身分組: {interaction.user.mention} (同意/不同意按鈕只限管理員，請勿亂點)",view=agree_view)
+            await interaction.channel.send(f"{administrator.mention} 申請{role.name}身分組: {interaction.user.mention} (同意/不同意按鈕只限管理員，請勿亂點)",view=agree_view)
         button.callback = button_callback
         view = View(timeout=None)
         view.add_item(button)
-        await interaction.channel.send("",view = view)   
+        if message_id == "0":
+            await interaction.channel.send(f"點擊下方按鈕申請{role.name}",view = view)
+        else:
+            message = await interaction.channel.fetch_message(int(message_id))
+            await message.edit(content=f"點擊下方按鈕申請{role.name}",view=view)
+        await interaction.response.send_message("設置完成!",ephemeral=True)   
 async def setup(bot):
     await bot.add_cog(Request_Role(bot))
